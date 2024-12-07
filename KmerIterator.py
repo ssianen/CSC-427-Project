@@ -1,0 +1,4 @@
+class KMerIterator:
+    '''
+    '''
+    next
