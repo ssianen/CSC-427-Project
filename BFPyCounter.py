@@ -1,7 +1,6 @@
 import sys
 from pybloom_live import BloomFilter
 
-
 def split_kmers(fastq_f):
     """
     - takes a fastq file
@@ -30,8 +29,53 @@ def split_kmers(fastq_f):
         kmers.append(s.join(thirty_one))
     return kmers
 
-#def 
-    #add to bloom filter using bf.add(thingtoadd)
+def fill_bloom_hash(B,T,k):
+    """
+    -function adds kmers to bloom filter B and dictionary T
+    - parameter B is a bloom filter
+    - parameter T is a dictionary acting as a hash table
+    - parameter k is a list of all kmers in the first fasta file (not reverse complement)
+    
+    """
+    for kmer in k:
+        x_rep = kmer #*******this should be the minimum lexographically of the kmer or its reverse complement
+        if x_rep in B: 
+            if x_rep not in T:
+                T[x_rep] = 0
+        else:
+            B.add(x_rep)
+
+def increment(T,k):
+    """
+    - function increments the count of kmers in hash dictionary for every time they appear in the read
+    - parameter T is the dictionary that acts as a hash table
+    - parameter k is a list of kmers
+    """
+    for kmer in k:
+        x_rep = kmer #*******this should be the minimum lexographically of the kmer or its reverse complement
+        if x_rep in T:
+            T[x_rep] = T[x_rep] + 1
+
+def remove_unique(T):
+    """
+    - function removes all false positives from the dictionary
+    - parameter T is the dictionary that acts as a hash table
+    - returns new dictionary only containing kmers that have appeared in reads more than once
+    """
+    new_T = {}
+    for key in T:
+        if T[key] != 1:
+            new_T[key] = T[key]
+    return new_T
+
+def dump(T):
+    """
+    - function outputs all the kmers and their counts for all kmers that appear more than once
+    - parameter T is the dictionary that acts as a hash table
+    """
+    for kmer in T:
+        print("the kmer is ",kmer," with count ",T[kmer]) #*********probably need a different print format
+
 
 
 
@@ -40,14 +84,15 @@ def main():
     """
     fastq_file = sys.argv[1]
     kmer_list = split_kmers(fastq_file)
-    hash_dict = {} #initialize dictionary that is used as a hash table T
+    hash_dict = {} #initialize dictionary that is used as a hash table, key is kmer, value is count of appearences of kmer. all kmers in dict should appear at least once in reads
     m = 8*(len(kmer_list))
     #*********may want to change bloom filter error rate from  0.01
     bf = BloomFilter(m, 0.01)#initialize empty bloomfilter of size m=8xn where n=the number of kmers
-    print(f"Number of hash functions: {bf.num_slices}")
-
-
-
+    bf.num_slices = 3 #set the number of hash functions used for the bloom filter to 3
+    fill_bloom_hash(bf,hash_dict,kmer_list)
+    increment(hash_dict,kmer_list)
+    final_dict = remove_unique(hash_dict)
+    dump(final_dict)
 
 if __name__ == "__main__":
     main()
