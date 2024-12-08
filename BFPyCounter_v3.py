@@ -38,11 +38,12 @@ def fill_bloom_hash(B,T,k):
     
     """
     for kmer in k:
-        if kmer in B: 
-            if kmer not in T:
-                T[kmer] = 0
+        x_rep = kmer #*******this should be the minimum lexographically of the kmer or its reverse complement
+        if x_rep in B: 
+            if x_rep not in T:
+                T[x_rep] = 0
         else:
-            B.add(kmer)
+            B.add(x_rep)
 
 def increment(T,k):
     """
@@ -51,8 +52,9 @@ def increment(T,k):
     - parameter k is a list of kmers
     """
     for kmer in k:
-        if kmer in T:
-            T[kmer] = T[kmer] + 1
+        x_rep = kmer #*******this should be the minimum lexographically of the kmer or its reverse complement
+        if x_rep in T:
+            T[x_rep] = T[x_rep] + 1
 
 def remove_unique(T):
     """
@@ -72,8 +74,7 @@ def dump(T):
     - parameter T is the dictionary that acts as a hash table
     """
     for kmer in T:
-        x_rep = kmer #*******this should be the minimum lexographically of the kmer or its reverse complement
-        print("the kmer is ",x_rep," with count ",T[x_rep]) #*********probably need a different print format
+        print("the kmer is ",kmer," with count ",T[kmer]) #*********probably need a different print format
 
 
 
