@@ -66,6 +66,27 @@ def remove_unique(T):
             new_T[key] = T[key]
     return new_T
 
+
+def reverse_complement(kmerToRC):
+    """
+    """
+
+    RCstr = ""
+
+    for baseIndex in range(1, len(kmerToRC)+1): #read the kmer in reverse
+        base = kmerToRC[-baseIndex]
+        if (base.upper() == "A"):
+            RCstr += "T"
+        elif (base.upper() == "C"):
+            RCstr += "G"
+        elif (base.upper() == "G"):
+            RCstr += "C"
+        elif (base.upper() == "T"):
+            RCStr += "A"
+
+    print(RCstr)
+
+
 def dump(T):
     """
     - function outputs all the kmers and their counts for all kmers that appear more than once
