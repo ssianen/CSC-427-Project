@@ -1,6 +1,5 @@
 import sys
 from pybloom_live import BloomFilter
-import pypocketmap as pkm
 
 def split_kmers(fastq_f):
     """
@@ -61,46 +60,20 @@ def remove_unique(T):
     - parameter T is the dictionary that acts as a hash table
     - returns new dictionary only containing kmers that have appeared in reads more than once
     """
-    new_T = pkm.create(str, int)
+    new_T = {}
     for key in T:
         if T[key] != 1:
             new_T[key] = T[key]
     return new_T
 
-def reverse_complement(kmerToRC):
-    """
-    - function finds the reverse complement of a 31mer
-    - parameter kmerToRC is a kmer with k=31
-    - return value is a 31mer that is a reverse complement of the input kmer
-    """
-    RCstr = ""
-    rev = kmerToRC[::-1]
-    for x in rev: #read the kmer in reverse
-        if (x.upper() == "A"):
-            RCstr += "T"
-        elif (x.upper() == "C"):
-            RCstr += "G"
-        elif (x.upper() == "G"):
-            RCstr += "C"
-        elif (x.upper() == "T"):
-            RCstr += "A"
-    return(RCstr)
-
 def dump(T):
     """
-    - function outputs all the kmers and their counts for all kmers that appear more than once to a new file called dump.txt
+    - function outputs all the kmers and their counts for all kmers that appear more than once
     - parameter T is the dictionary that acts as a hash table
     """
-    f = open("dump.txt", "w")
-    wa = "kmer"
-    wb = "count"
-    f.write(f"{wa}\t{wb}\n")
     for kmer in T:
-        rev_comp = reverse_complement(kmer)
-        x_rep = min(str(kmer), rev_comp) #*******this should be the minimum lexographically of the kmer or its reverse complement
-        count =T[kmer]
-        f.write(f"{x_rep}\t{count}\n")
-    f.close()
+        x_rep = kmer #*******this should be the minimum lexographically of the kmer or its reverse complement
+        print("the kmer is ",x_rep," with count ",T[x_rep]) #*********probably need a different print format
 
 
 
@@ -110,7 +83,7 @@ def main():
     """
     fastq_file = sys.argv[1]
     kmer_list = split_kmers(fastq_file)
-    hash_dict = pkm.create(str, int) #initialize dictionary that is used as a hash table, key is kmer, value (64bit) is count of appearences of kmer. all kmers in dict should appear at least once in reads
+    hash_dict = {} #initialize dictionary that is used as a hash table, key is kmer, value is count of appearences of kmer. all kmers in dict should appear at least once in reads
     m = 8*(len(kmer_list))
     #*********may want to change bloom filter error rate from  0.01
     bf = BloomFilter(m, 0.01)#initialize empty bloomfilter of size m=8xn where n=the number of kmers
