@@ -9,6 +9,7 @@ def split_kmers(fastq_f):
     - finds all 31mers in the file
     - returns the list of 31mers
     """
+    #step1 go through fastq file and make list of every sequence
     base_list = []
     f = open(fastq_f, 'r') #open file to read
     count=1
@@ -60,11 +61,11 @@ def remove_unique(T):
     - parameter T is the dictionary that acts as a hash table
     - returns new dictionary only containing kmers that have appeared in reads more than once
     """
-    #new_T = pkm.create(str, int)
+    new_T = pkm.create(str, int)
     for key in T:
-        if T[key] == 1:
-            del T[key]
-    return T
+        if T[key] != 1:
+            new_T[key] = T[key]
+    return new_T
 
 def reverse_complement(kmerToRC):
     """
@@ -100,6 +101,9 @@ def dump(T):
         count =T[kmer]
         f.write(f"{x_rep}\t{count}\n")
     f.close()
+
+
+
 
 def main():
     """
