@@ -1,4 +1,4 @@
-# BFPyCounter: A re-implementation of BFCounter in Python
+# BFPyCounter: A Re-implementation of BFCounter in Python
 
 - Combines count and dump functions of BFCounter.
 - Accepts a single fastq file of a paired-end read as input.
